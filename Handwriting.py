@@ -12,11 +12,6 @@ tar -xf IAM_Words/words.tgz -C data/words
 mv IAM_Words/words.txt data
 """
 
-
-"""
-## Imports
-"""
-
 from tensorflow.keras.layers import StringLookup
 from tensorflow import keras
 
@@ -29,7 +24,7 @@ np.random.seed(42)
 tf.random.set_seed(42)
 
 """
-## Dataset splitting
+Dataset splitting
 """
 
 base_path = "data"
@@ -46,10 +41,8 @@ len(words_list)
 
 np.random.shuffle(words_list)
 
-"""
-split the dataset into three subsets with a 90:5:5 ratio (train:validation:test).
-"""
 
+# split the dataset into three subsets with a 90:5:5 ratio (train:validation:test).
 split_idx = int(0.9 * len(words_list))
 train_samples = words_list[:split_idx]
 test_samples = words_list[split_idx:]
@@ -66,8 +59,9 @@ print(f"Total training samples: {len(train_samples)}")
 print(f"Total validation samples: {len(validation_samples)}")
 print(f"Total test samples: {len(test_samples)}")
 
+
 """
-## Data input pipeline
+Data input pipeline
 """
 
 base_image_path = os.path.join(base_path, "words")
@@ -97,9 +91,8 @@ train_img_paths, train_labels = get_image_paths_and_labels(train_samples)
 validation_img_paths, validation_labels = get_image_paths_and_labels(validation_samples)
 test_img_paths, test_labels = get_image_paths_and_labels(test_samples)
 
-"""
-Ground-truth labels.
-"""
+
+# Ground-truth labels.
 
 train_labels_cleaned = []
 characters = set()
@@ -120,10 +113,8 @@ print("Vocab size: ", len(characters))
 
 train_labels_cleaned[:10]
 
-"""
-clean the validation and the test labels.
-"""
 
+#clean the validation and the test labels.
 
 def clean_labels(labels):
     cleaned_labels = []
@@ -146,7 +137,7 @@ num_to_char = StringLookup(
 )
 
 """
-### Resizing images
+Resizing images
 """
 
 
@@ -186,7 +177,7 @@ def distortion_free_resize(image, img_size):
 
 
 """
-### Putting all together
+Putting all together
 """
 
 batch_size = 64
@@ -225,7 +216,7 @@ def prepare_dataset(image_paths, labels):
 
 
 """
-## Prepare `tf.data.Dataset` objects
+Prepare `tf.data.Dataset` objects
 """
 
 train_ds = prepare_dataset(train_img_paths, train_labels_cleaned)
@@ -233,7 +224,7 @@ validation_ds = prepare_dataset(validation_img_paths, validation_labels_cleaned)
 test_ds = prepare_dataset(test_img_paths, test_labels_cleaned)
 
 """
-## Visualize a few samples
+Visualize a few samples
 """
 
 for data in train_ds.take(1):
@@ -262,7 +253,7 @@ plt.show()
 
 
 """
-## Model
+Model
 """
 
 
@@ -345,7 +336,7 @@ model = build_model()
 model.summary()
 
 """
-## Evaluation metric
+Evaluation metric
 """
 
 validation_images = []
@@ -355,11 +346,8 @@ for batch in validation_ds:
     validation_images.append(batch["image"])
     validation_labels.append(batch["label"])
 
-"""
-create a callback to monitor the edit distances.
-"""
 
-
+#create a callback to monitor the edit distances.
 def calculate_edit_distance(labels, predictions):
     saprse_labels = tf.cast(tf.sparse.from_dense(labels), dtype=tf.int64)
 
@@ -396,7 +384,7 @@ class EditDistanceCallback(keras.callbacks.Callback):
 
 
 """
-## Training
+Training
 """
 
 epochs = 10  # To get good results this should be at least 50.
@@ -416,7 +404,7 @@ history = model.fit(
 
 
 """
-## Inference
+Inference
 """
 
 
