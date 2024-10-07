@@ -12,14 +12,6 @@ tar -xf IAM_Words/words.tgz -C data/words
 mv IAM_Words/words.txt data
 """
 
-!wget -q https://github.com/sayakpaul/Handwriting-Recognizer-in-Keras/releases/download/v1.0.0/IAM_Words.zip
-!unzip -qq IAM_Words.zip
-
-!mkdir data
-!mkdir data/words
-!tar -xf IAM_Words/words.tgz -C data/words
-!mv IAM_Words/words.txt data
-
 from tensorflow.keras.layers import StringLookup
 from tensorflow import keras
 
@@ -399,7 +391,8 @@ epochs = 10  # To get good results this should be at least 50.
 
 model = build_model()
 prediction_model = keras.models.Model(
-    model.input[0], model.get_layer(name="dense2").output
+    model.input[0],
+    model.get_layer(name="dense2").output
 )
 edit_distance_callback = EditDistanceCallback(prediction_model)
 
@@ -449,3 +442,4 @@ for batch in test_ds.take(1):
         ax[i // 4, i % 4].axis("off")
 
 plt.show()
+
